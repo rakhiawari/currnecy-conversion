@@ -1,7 +1,5 @@
 package com.convertor.currencyconvertor.controller;
 
-import com.convertor.currencyconvertor.models.Api;
-import com.convertor.currencyconvertor.models.CurrencyConvertor;
 import com.convertor.currencyconvertor.services.CurrencyConvertorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;

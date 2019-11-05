@@ -1,24 +1,30 @@
 package com.convertor.currencyconvertor.models;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.math.BigDecimal;
+import javax.persistence.*;
+import java.util.Date;
 
 @Entity
+@Table(name="currency")
 public class CurrencyConvertor {
-    @Id
-    private String id;
-    private String from;
-    private String to;
-    private BigDecimal amount;
-    private BigDecimal convertedAmount;
 
-    public CurrencyConvertor(String id, String from, String to, BigDecimal amount, BigDecimal convertedAmount) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String id;
+
+    private String base;
+    private Date date;
+    private String time_last_updated;
+    private String countryCode;
+    private Double currencyRate;
+
+
+    public CurrencyConvertor(String base, Date date, String time_last_updated, String key, Double value) {
         this.id = id;
-        this.from = from;
-        this.to = to;
-        this.amount = amount;
-        this.convertedAmount = convertedAmount;
+        this.base = base;
+        this.date = date;
+        this.time_last_updated = time_last_updated;
+        this.countryCode = key;
+        this.currencyRate = value;
     }
 
     public String getId() {
@@ -29,35 +35,43 @@ public class CurrencyConvertor {
         this.id = id;
     }
 
-    public String getFrom() {
-        return from;
+    public String getBase() {
+        return base;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    public void setBase(String base) {
+        this.base = base;
     }
 
-    public String getTo() {
-        return to;
+    public Date getDate() {
+        return date;
     }
 
-    public void setTo(String to) {
-        this.to = to;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
+    public String getTime_last_updated() {
+        return time_last_updated;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setTime_last_updated(String time_last_updated) {
+        this.time_last_updated = time_last_updated;
     }
 
-    public BigDecimal getConvertedAmount() {
-        return convertedAmount;
+    public String getCountryCode() {
+        return countryCode;
     }
 
-    public void setConvertedAmount(BigDecimal convertedAmount) {
-        this.convertedAmount = convertedAmount;
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    public Double getCurrencyRate() {
+        return currencyRate;
+    }
+
+    public void setCurrencyRate(Double currencyRate) {
+        this.currencyRate = currencyRate;
     }
 }

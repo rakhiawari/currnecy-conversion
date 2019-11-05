@@ -1,15 +1,19 @@
 package com.convertor.currencyconvertor.services;
 
-import com.convertor.currencyconvertor.models.Api;
+import com.convertor.currencyconvertor.DAO.CurrencyConvertorDAO;
+import com.convertor.currencyconvertor.models.ApiData;
 import com.convertor.currencyconvertor.models.CurrencyConvertor;
 import com.convertor.currencyconvertor.repository.CurrencyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
+import java.util.Map;
 
 @Service
 public class CurrencyConvertorService {
@@ -17,14 +21,27 @@ public class CurrencyConvertorService {
     @Autowired
     private CurrencyRepository currencyRepository;
 
-    private static final Logger log= LoggerFactory.getLogger(CurrencyConvertorService.class);
+    @Autowired
+    ApiData apiData;
+    @Autowired
+    CurrencyConvertorDAO currencyConvertorDAO;
+
+
+    @PostConstruct
+    public void init() {
+
+        apiData = currencyConvertorDAO.init();
+
+        for (Map.Entry<String, Double> entry : apiData.getRates().entrySet()) {
+
+            CurrencyConvertor object = new CurrencyConvertor(apiData.getBase(), apiData.getDate(),
+                    apiData.getTime_last_updated(), entry.getKey(), entry.getValue());
+            currencyRepository.save(object);
+        }
+
+    }
 
     public String convertCurrency(String from, String to, BigDecimal amount) {
-        RestTemplate restTemplate = new RestTemplate();
-        Api api = restTemplate.getForObject("https://api.exchangerate-api" +
-                ".com/v4/latest/USD", Api.class);
-
-        currencyRepository.save(api);
-        return api.toString();
+        return null;
     }
 }
