@@ -28,7 +28,7 @@ public class CurrencyConverterService {
     public void init() {
         String result = currencyConverterDAO.init();
         JSONParser parser = new JSONParser();
-        JSONObject jsonObject = null;
+        JSONObject jsonObject;
         try {
             jsonObject = (JSONObject) parser.parse(result);
             String base = (String) jsonObject.get("base");

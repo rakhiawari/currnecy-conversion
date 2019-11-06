@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CurrencyConverterController {
 
     @Autowired
-    CurrencyConverterService currencyConverterService;
+    private CurrencyConverterService currencyConverterService;
 
     @GetMapping("from/{from}/to/{to}/{amount}")
     public Double convertCurrency(@PathVariable("from") String from, @PathVariable("to") String to,
