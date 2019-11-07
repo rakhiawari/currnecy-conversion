@@ -5,6 +5,7 @@ import java.util.Date;
 
 @Entity
 public class CurrencyApi {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;

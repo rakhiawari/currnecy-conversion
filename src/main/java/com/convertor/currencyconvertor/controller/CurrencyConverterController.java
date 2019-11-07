@@ -1,5 +1,6 @@
 package com.convertor.currencyconvertor.controller;
 
+import com.convertor.currencyconvertor.models.ConvertedCurrency;
 import com.convertor.currencyconvertor.services.CurrencyConverterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +16,8 @@ public class CurrencyConverterController {
     private CurrencyConverterService currencyConverterService;
 
     @GetMapping("from/{from}/to/{to}/{amount}")
-    public Double convertCurrency(@PathVariable("from") String from, @PathVariable("to") String to,
-                                  @PathVariable("amount") Double amount) {
+    public ConvertedCurrency convertCurrency(@PathVariable("from") String from, @PathVariable("to") String to,
+                                             @PathVariable("amount") Double amount) {
         return currencyConverterService.convertCurrency(from, to, amount);
     }
 }

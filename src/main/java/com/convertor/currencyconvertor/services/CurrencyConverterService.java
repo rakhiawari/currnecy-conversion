@@ -1,18 +1,12 @@
 package com.convertor.currencyconvertor.services;
 
 import com.convertor.currencyconvertor.dao.CurrencyConverterDAO;
+import com.convertor.currencyconvertor.models.ConvertedCurrency;
 import com.convertor.currencyconvertor.models.CurrencyApi;
+import com.convertor.currencyconvertor.repository.CurrencyApiRepository;
 import com.convertor.currencyconvertor.repository.CurrencyRepository;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Set;
 
 
 @Service
@@ -21,54 +15,44 @@ public class CurrencyConverterService {
 
     @Autowired
     CurrencyConverterDAO currencyConverterDAO;
+
+    @Autowired
+    ConvertedCurrency convertedCurrency;
+
     @Autowired
     CurrencyRepository currencyRepository;
 
-    @PostConstruct
-    public void init() {
-        String result = currencyConverterDAO.init();
-        JSONParser parser = new JSONParser();
-        JSONObject jsonObject;
-        try {
-            jsonObject = (JSONObject) parser.parse(result);
-            String base = (String) jsonObject.get("base");
-            Date date = new Date();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            date = simpleDateFormat.parse(jsonObject.get("date").toString());
-            String time_last_updated = jsonObject.get("time_last_updated").toString();
-            JSONObject rates = (JSONObject) jsonObject.get("rates");
-            Set<String> set = rates.keySet();
-            for (String s : set) {
-                String value = rates.get(s).toString();
-                CurrencyApi currencyApi = new CurrencyApi(base, date, time_last_updated, s, Double.parseDouble(value));
-                currencyConverterDAO.save(currencyApi);
-            }
-        } catch (ParseException | java.text.ParseException e) {
-            e.printStackTrace();
-        }
-    }
+    public ConvertedCurrency convertCurrency(String from, String to, Double amount) {
 
-    public Double convertCurrency(String from, String to, Double amount) {
 
         String base = "USD";
-        if (currencyConverterDAO.findByCurrencyCode(from) == null || currencyConverterDAO.findByCurrencyCode(to) == null) {
-            return 0.0;
+        CurrencyApi fromCurrency = currencyConverterDAO.findByCurrencyCode(from);
+        CurrencyApi toCurrency = currencyConverterDAO.findByCurrencyCode(to);
+
+        if (fromCurrency == null || toCurrency == null) {
+
+            convertedCurrency = new ConvertedCurrency(from, to, amount, 0.0);
+            currencyRepository.save(convertedCurrency);
+            return convertedCurrency;
+
         } else if (from.equals(base)) {
 
-            CurrencyApi currency = currencyConverterDAO.findByCurrencyCode(to);
-            return (currency.getValue() * amount);
+            convertedCurrency = new ConvertedCurrency(from, to, amount, (toCurrency.getValue() * amount));
+            currencyRepository.save(convertedCurrency);
+            return convertedCurrency;
 
         } else if (to.equals(base)) {
 
-            CurrencyApi currency = currencyConverterDAO.findByCurrencyCode(from);
-            return ((1 / currency.getValue()) * amount);
+            convertedCurrency = new ConvertedCurrency(from, to, amount, ((1 / fromCurrency.getValue()) * amount));
+            currencyRepository.save(convertedCurrency);
+            return convertedCurrency;
 
         } else {
-
-            CurrencyApi fromCurrency = currencyConverterDAO.findByCurrencyCode(from);
-            CurrencyApi toCurrency = currencyConverterDAO.findByCurrencyCode(to);
             Double temp = 1 / fromCurrency.getValue();
-            return (temp * toCurrency.getValue());
+            convertedCurrency = new ConvertedCurrency(from, to, amount, (temp * toCurrency.getValue()));
+            currencyRepository.save(convertedCurrency);
+            return convertedCurrency;
+
         }
     }
 }
