@@ -41,7 +41,7 @@ public class CurrencyConverterService {
             for (String s : set) {
                 String value = rates.get(s).toString();
                 CurrencyApi currencyApi = new CurrencyApi(base, date, time_last_updated, s, Double.parseDouble(value));
-                currencyRepository.save(currencyApi);
+                currencyConverterDAO.save(currencyApi);
             }
         } catch (ParseException | java.text.ParseException e) {
             e.printStackTrace();
@@ -51,22 +51,22 @@ public class CurrencyConverterService {
     public Double convertCurrency(String from, String to, Double amount) {
 
         String base = "USD";
-        if (currencyRepository.findByCurrencyCode(from) == null || currencyRepository.findByCurrencyCode(to) == null) {
+        if (currencyConverterDAO.findByCurrencyCode(from) == null || currencyConverterDAO.findByCurrencyCode(to) == null) {
             return 0.0;
         } else if (from.equals(base)) {
 
-            CurrencyApi currency = currencyRepository.findByCurrencyCode(to);
+            CurrencyApi currency = currencyConverterDAO.findByCurrencyCode(to);
             return (currency.getValue() * amount);
 
         } else if (to.equals(base)) {
 
-            CurrencyApi currency = currencyRepository.findByCurrencyCode(from);
+            CurrencyApi currency = currencyConverterDAO.findByCurrencyCode(from);
             return ((1 / currency.getValue()) * amount);
 
         } else {
 
-            CurrencyApi fromCurrency = currencyRepository.findByCurrencyCode(from);
-            CurrencyApi toCurrency = currencyRepository.findByCurrencyCode(to);
+            CurrencyApi fromCurrency = currencyConverterDAO.findByCurrencyCode(from);
+            CurrencyApi toCurrency = currencyConverterDAO.findByCurrencyCode(to);
             Double temp = 1 / fromCurrency.getValue();
             return (temp * toCurrency.getValue());
         }
